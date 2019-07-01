@@ -1,0 +1,44 @@
+# Google Project ID
+export PROJECTID="osecluster"
+# Google Region
+export REGION="southamerica-east1"
+export DEFAULTZONE="southamerica-east1-b"
+# For multizone deployments
+ZONES=("southamerica-east1-a" "southamerica-east1-b" "southamerica-east1-c")
+# For single zone deployments
+# ZONES=("southamerica-east1-a")
+export MYZONES_LIST="$(declare -p ZONES)"
+# OpenShift Cluster ID
+export CLUSTERID="osecluster"
+# Network and subnet configuration
+export CLUSTERID_NETWORK="${CLUSTERID}-net"
+export CLUSTERID_SUBNET="${CLUSTERID}-subnet"
+# Subnet CIDR, modify if needed
+export CLUSTERID_SUBNET_CIDR="10.240.0.0/24"
+# DNS
+export DNSZONE="linux4sysadmin-com-br"
+export DOMAIN="linux4sysadmin.com.br."
+export TTL=3600
+# RHEL image to be used
+export RHELIMAGE="${CLUSTERID}-rhel-image"
+export IMAGEPROJECT="${PROJECTID}"
+# Bastion settings
+export BASTIONDISKSIZE="10GB"
+export BASTIONSIZE="g1-small"
+# Master nodes settings
+export MASTER_NODE_COUNT=1
+export MASTERDISKSIZE="30GB"
+export MASTERSIZE="n1-standard-4"
+export MASTERCONTAINERSSIZE="20GB"
+# Infra nodes settings
+export INFRA_NODE_COUNT=1
+export INFRADISKSIZE="30GB"
+export INFRASIZE="n1-standard-4"
+export INFRACONTAINERSSIZE="20GB"
+# App nodes settings
+export APP_NODE_COUNT=3
+export APPDISKSIZE="30GB"
+export APPSIZE="n1-standard-2"
+export APPCONTAINERSSIZE="20GB"
+# CNS nodes settings
+export GFSDISKSIZE="100GB"
