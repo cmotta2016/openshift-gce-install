@@ -31,8 +31,6 @@ openshift_master_named_certificates=[{ "certfile": "{{ lookup('env','HOME') }}/.
 openshift_hosted_router_certificate={ "certfile": "{{ lookup('env','HOME') }}/.acme.sh/osecluster-apps.linux4sysadmin.com.br/osecluster-apps.linux4sysadmin.com.br.cer", "keyfile": "{{ lookup('env','HOME') }}/.acme.sh/osecluster-apps.linux4sysadmin.com.br/osecluster-apps.linux4sysadmin.com.br.key", "cafile": "{{ lookup('env','HOME') }}/.acme.sh/osecluster-apps.linux4sysadmin.com.br/ca.cer" }
 
 oreg_url=registry.redhat.io/openshift3/ose-${component}:${version}
-oreg_auth_user=dvopsgrp_oi
-oreg_auth_password=#devops16#
 openshift_examples_modify_imagestreams=false
 openshift_release=v3.11.98
 openshift_image_tag=v3.11.98
