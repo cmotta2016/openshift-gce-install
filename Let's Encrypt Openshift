@@ -1,0 +1,34 @@
+## Usando certificados Let's Encrypt com Openshift
+$ curl https://get.acme.sh | sh
+OBS: Deslogar e logar novamente no terminal
+
+## Gerar certificados do router
+acme.sh --issue --dns -d 'osecluster-apps.linux4sysadmin.com.br' -d '*.osecluster-apps.linux4sysadmin.com.br' --yes-I-know-dns-manual-mode-enough-go-ahead-please
+
+## Adicionar no DNS as entradas que a saída do comando exigir. Ex.:
+_acme-challenge.app.openshift.test. 300 IN TXT "y6FiU9ZCBKi8koQGGQDXWyKJYOXTTsqgU6LTd_CBAeE"
+_acme-challenge.app.openshift.test. 300 IN TXT "Bo4VxqsPvOHWymqvmUR43wVoucQroe3QV041ZWjah-c"
+
+## Checar se o registro já foi feito
+$ dig _acme-challenge.osecluster-apps.linux4sysadmin.com.br IN TXT
+
+## Após a propagação das alterações, gerar os certificados
+acme.sh --renew --dns -d 'osecluster-apps.linux4sysadmin.com.br' -d '*.osecluster-apps.linux4sysadmin.com.br' --yes-I-know-dns-manual-mode-enough-go-ahead-please
+
+
+## O mesmo processo será feito para a máquina master, lembrando de alterar apenas para o domínio do master
+acme.sh --issue --dns -d 'osecluster-ocp.linux4sysadmin.com.br' --yes-I-know-dns-manual-mode-enough-go-ahead-please
+acme.sh --renew --dns -d 'osecluster-ocp.linux4sysadmin.com.br' --yes-I-know-dns-manual-mode-enough-go-ahead-please
+
+### Adicionar no inventory
+openshift_master_overwrite_named_certificates=true
+openshift_master_named_certificates=[{ "certfile": "{{ lookup('env','HOME') }}/.acme.sh/osecluster-ocp.linux4sysadmin.com.br/osecluster-ocp.linux4sysadmin.com.br.cer", "keyfile": "{{ lookup('env','HOME') }}/.acme.sh/osecluster-ocp.linux4sysadmin.com.br/osecluster-ocp.linux4sysadmin.com.br.key", "cafile": "{{ lookup('env','HOME') }}/.acme.sh/osecluster-ocp.linux4sysadmin.com.br/ca.cer", "names": [ "osecluster-ocp.linux4sysadmin.com.br" ] }]
+openshift_hosted_router_certificate={ "certfile": "{{ lookup('env','HOME') }}/.acme.sh/osecluster-apps.linux4sysadmin.com.br/osecluster-apps.linux4sysadmin.com.br.cer", "keyfile": "{{ lookup('env','HOME') }}/.acme.sh/osecluster-apps.linux4sysadmin.com.br/osecluster-apps.linux4sysadmin.com.br.key", "cafile": "{{ lookup('env','HOME') }}/.acme.sh/osecluster-apps.linux4sysadmin.com.br/ca.cer" }
+
+## Redeploy dos certificados
+$ ansible-playbook -i inventory /usr/share/ansible/openshift-ansible/playbooks/redeploy-certificates.yml
+
+## Checa se os certificados estão funcionando
+openssl s_client -host osecluster-ocp.linux4sysadmin.com.br -port 443 -servername osecluster-ocp.linux4sysadmin.com.br < /dev/null |head -n 9
+
+Fonte: https://github.com/nmasse-itix/OpenShift-Examples/tree/master/Public-Certificates-with-Letsencrypt
